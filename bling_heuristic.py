@@ -31,7 +31,7 @@ def infotodict(seqinfo):
     
     for s in seqinfo:
         # exceptions specific to this study
-        if (s.patient_id == '20190607LG' or s.patient_id == '20190709LG') and ('run01_5' in s.dcm_dir_name or 'run01_6' in s.dcm_dir_name):
+        if ((s.date == '20190607LG') or (s.date == '20190709LG')) and (('run01_5' in s.dcm_dir_name) or ('run01_6' in s.dcm_dir_name)):
             # go to next iteration
             continue
         
