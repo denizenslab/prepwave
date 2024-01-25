@@ -1,29 +1,38 @@
 #!/bin/bash
 
 subjects=("COL" )
-data_dir="data/test/dicoms"
-output_dir="data/bling_data"
+data_dir="data/tunnel/dicoms"
+output_dir="data/bling_data_test"
+heuristics_file="bling_heuristic.py"
 
-
-# dry pass to figure out naming for heuristic file
 for subject in ${subjects[@]}
 do  
-    sessions=$(find $data_dir/$subject/ -mindepth 1 -maxdepth 1 -type d)
+    sessions=$(find $data_dir/$subject/ -mindepth 1 -maxdepth 1 -type d | sort)
     for session in ${sessions[@]}
     do
-        echo \n "Running heudiconv dry pass for subject $subject - session "${session##*/}...
-        heudiconv -d $data_dir/{subject}/{session}/*/* -s $subject -ss ${session##*/} -c none -f convertall -o $output_dir/
+
+        # dry pass to figure out naming for heuristic file
+        session=${session##*/}
+        echo -e "\nRunning heudiconv dry pass for subject $subject - session "$session...
+        heudiconv -d $data_dir/{subject}/{session}/*/* -s $subject -ss $session -c none -f convertall -o $output_dir/ --overwrite
+    
+    
+        # run 
+        session_id=$(( $session_id + 1 ))
+        #exceptions for COL subject
+        if [[ $subject == "COL" ]]
+        then
+            if [[ $session == "20190709LG" ]]
+            then
+                session_id=2
+            fi
+        fi
+
+        echo -e "\nConverting for subject" $subject "- session #"$session_id $session" using heudiconv..."
+        # if [[ "$session_id" == "1" ]]
+        # then
+        heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ --overwrite
+        # fi
+        
     done
 done
-
-# subject="COL"
-# # get folder names in dicom folder
-# folders=$(find data/test/dicoms/$subject/ -maxdepth 1 -type d -name "*")
-# # print folder names
-# # echo $folders
-# # print only folder names and not full path
-# # iterate through folders
-# for folder in $folders:
-# do
-#     echo ${folder##*/}
-# done
