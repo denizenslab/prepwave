@@ -1,3 +1,9 @@
+"""
+bling_heuristic.py: Custom heuristic for heudiconv for the bling data. 
+"""
+
+__author__ = "Anuja Negi"
+
 import os
 
 
@@ -43,7 +49,7 @@ def infotodict(seqinfo):
 
     for s in seqinfo:
         # exceptions specific to this study
-        if ((s.date == "20190607LG") or (s.date == "20190709LG")) and (
+        if ((s.date == "20190607") or (s.date == "20190709")) and (
             ("run01_5" in s.dcm_dir_name) or ("run01_6" in s.dcm_dir_name)
         ):
             # go to next iteration
@@ -118,7 +124,7 @@ def infotodict(seqinfo):
                 )
 
         # tasks
-        if "iso" in s.protocol_name:
+        if ("iso" in s.protocol_name) or ("Audio" in s.protocol_name):
             part = "mag" if "M" in s.image_type else "phase"
             if "alternateithicatom" in s.protocol_name:
                 info[tasks].append(
@@ -135,10 +141,6 @@ def infotodict(seqinfo):
             if "legacy" in s.protocol_name:
                 info[tasks].append(
                     {"item": s.series_id, "task": "legacy", "part": part}
-                )
-            if "wheretheressmoke" in s.protocol_name:
-                info[tasks].append(
-                    {"item": s.series_id, "task": "wheretheressmoke", "part": part}
                 )
             if "odetostepfather" in s.protocol_name:
                 info[tasks].append(
