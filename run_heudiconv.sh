@@ -9,7 +9,7 @@ VERSION=0.1.0
 SUBJECT=bling-heudiconv-convert
 USAGE="Usage: bash run_heudiconv.sh"
 
-subjects=("COL" )
+subjects=("COL")
 data_dir="data/tunnel/dicoms"
 output_dir="data/bling_data_test"
 heuristics_file="bling_heuristic.py"
@@ -38,7 +38,7 @@ do
         fi
 
         echo -e "\nConverting for subject" $subject "- session #"$session_id $session" using heudiconv..."
-        heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ --overwrite
+        heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ -c dcm3niix -b --overwrite
         
     done
 done
