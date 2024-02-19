@@ -11,11 +11,11 @@ USAGE="Usage: bash run_heudiconv.sh"
 
 subjects=("COL")
 data_dir="data/tunnel/dicoms"
-output_dir="data/test_bids"
 heuristics_file="bling_heuristic.py"
 
 for subject in ${subjects[@]}
 do  
+    output_dir="data/sub-$subject/"
     sessions=$(find $data_dir/$subject/ -mindepth 1 -maxdepth 1 -type d | sort)
 
     for session in ${sessions[@]}
@@ -47,7 +47,7 @@ do
             then
                 session_id=4
             fi
-            if [[ $session == "20210920COL" ]]
+            if [[ $session == "20201013COL" ]]
             then
                 session_id=5
             fi
@@ -62,8 +62,7 @@ do
         heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ -c dcm2niix -b --overwrite
         
     done
+    # run BIDS validator
+    # echo -e "\nRunning BIDS validator on $output_dir ..."
+    # bids-validator $output_dir
 done
-
-# run BIDS validator
-# echo -e "\nRunning BIDS validator..."
-# bids-validator $output_dir
