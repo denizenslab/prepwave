@@ -11,7 +11,7 @@ USAGE="Usage: bash run_heudiconv.sh"
 
 subjects=("COL")
 data_dir="data/tunnel/dicoms"
-output_dir="data/bling_data_test"
+output_dir="data/test_bids"
 heuristics_file="bling_heuristic.py"
 
 for subject in ${subjects[@]}
@@ -31,14 +31,39 @@ do
         #exceptions for COL subject
         if [[ $subject == "COL" ]]
         then
+            if [[ $session == "20190607LG" ]]
+            then
+                session_id=2
+            fi
             if [[ $session == "20190709LG" ]]
             then
                 session_id=2
             fi
+            if [[ $session == "20210810COL" ]]
+            then
+                session_id=3
+            fi
+            if [[ $session == "20210920COL" ]]
+            then
+                session_id=4
+            fi
+            if [[ $session == "20210920COL" ]]
+            then
+                session_id=5
+            fi
+            if [[ $session == "20201017COL" ]]
+            then
+                session_id=6
+            fi
+
         fi
 
         echo -e "\nConverting for subject" $subject "- session #"$session_id $session" using heudiconv..."
-        heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ -c dcm3niix -b --overwrite
+        heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ -c dcm2niix -b --overwrite
         
     done
 done
+
+# run BIDS validator
+# echo -e "\nRunning BIDS validator..."
+# bids-validator $output_dir
