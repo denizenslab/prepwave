@@ -34,8 +34,11 @@ def infotodict(seqinfo):
     tasks = create_key(
         "{session}/func/sub-{subject}_{session}_task-{task}_run-{item:02d}_part-{part}_bold"
     )
-    # avatar = create_key('{session}/func/sub-{subject}_task-avatar_run-{item:01d}_bold')
-    # avatar = create_key('sub-{subject}/func/sub-{subject}_task-avatar_bold')
+    
+    #physio
+    physio = create_key(
+        "{session}/beh/sub-{subject}_{session}_run-{item:02d}_recording-{recording}_physio"
+    )
 
     info = {
         t1w: [],
@@ -44,7 +47,7 @@ def infotodict(seqinfo):
         fmap: [],
         localiser: [],
         tasks: [],
-        # avatar: []
+        physio: []
     }
 
     for s in seqinfo:
@@ -122,7 +125,17 @@ def infotodict(seqinfo):
                         "part": part,
                     }
                 )
-
+        # physio and other continuos data
+        if "ep2d_neuro" in s.protocol_name:
+            if "etcalib" in s.protocol_name:
+                recording = "eyetracking"
+            if "ret" in s.protocol_name:
+                recording = "retinotopy"   
+            
+            info[physio].append(
+                {"item": s.series_id, "recording": recording}
+            )
+            
         # tasks
         if ("iso" in s.protocol_name) or ("Audio" in s.protocol_name):
             part = "mag" if "M" in s.image_type else "phase"
