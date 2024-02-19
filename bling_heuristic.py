@@ -128,13 +128,11 @@ def infotodict(seqinfo):
         # physio and other continuos data
         if ("ep2d_neuro" in s.protocol_name) or ('iso' in s.protocol_name):
             if ("etcalib" in s.protocol_name) or ("eyetrack" in s.protocol_name): 
-                recording = "eyetracking"
+                info[physio].append(
+                {"item": s.series_id, "recording": 'eyetracking'})
             if "ret" in s.protocol_name:
-                recording = "retinotopy"   
-            
-            info[physio].append(
-                {"item": s.series_id, "recording": recording}
-            )
+                info[physio].append(
+                {"item": s.series_id, "recording": 'retinotopy'})
             
         # tasks
         if ("iso" in s.protocol_name) or ("Audio" in s.protocol_name):
