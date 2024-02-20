@@ -22,7 +22,10 @@ def infotodict(seqinfo):
 
     # field maps
     fmap = create_key(
-        "{session}/fmap/sub-{subject}_{session}_run-{item:02d}_part-{part}_epi"
+        "{session}/fmap/sub-{subject}_{session}_acq-{acq}_run-{item:02d}_part-{part}"
+    )
+    fmap_with_dir = create_key(
+        "{session}/fmap/sub-{subject}_{session}_acq-{acq}_dir-{dir}_run-{item:02d}_dir-{dir}_{suffix}"
     )
 
     # localisers
@@ -34,21 +37,13 @@ def infotodict(seqinfo):
     tasks = create_key(
         "{session}/func/sub-{subject}_{session}_task-{task}_run-{item:02d}_part-{part}_bold"
     )
-    
-    #physio
+
+    # physio
     physio = create_key(
-        "{session}/beh/sub-{subject}_{session}_run-{item:02d}_recording-{recording}_physio"
+        "{session}/beh/sub-{subject}_{session}_run-{item:02d}_part-{part}_recording-{recording}_physio"
     )
 
-    info = {
-        t1w: [],
-        # dwi: [],
-        # rest: [],
-        fmap: [],
-        localiser: [],
-        tasks: [],
-        physio: []
-    }
+    info = {t1w: [], fmap: [], fmap_with_dir: [], localiser: [], tasks: [], physio: []}
 
     for s in seqinfo:
         # exceptions specific to this study
@@ -68,7 +63,18 @@ def infotodict(seqinfo):
         # field maps
         if "gre_field_mapping" in s.protocol_name:
             part = "mag" if "M" in s.image_type else "phase"
-            info[fmap].append({"item": s.series_id, "part": part})
+            if part == "mag":
+                suffix = "magnitude"
+            else:
+                suffix = "phasediff"
+            info[fmap].append(
+                {"item": s.series_id, "acq": "gre", "part": part, "suffix": suffix}
+            )
+        if ("iso" in s.protocol_name) and ("se" in s.protocol_name):
+            dir = s.protocol_name[-2:]
+            info[fmap_with_dir].append(
+                {"item": s.series_id, "acq": "se", "dir": dir, "suffix": "fieldmap"}
+            )
 
         # localisers
         if "ep2d_neuro" in s.protocol_name:
@@ -109,14 +115,6 @@ def infotodict(seqinfo):
                 info[localiser].append(
                     {"item": s.series_id, "localiser_category": "avsnr", "part": part}
                 )
-            if "ret" in s.protocol_name:
-                info[localiser].append(
-                    {
-                        "item": s.series_id,
-                        "localiser_category": "retinotopy",
-                        "part": part,
-                    }
-                )
             if "AuditoryLoc" in s.protocol_name:
                 info[localiser].append(
                     {
@@ -126,14 +124,17 @@ def infotodict(seqinfo):
                     }
                 )
         # physio and other continuos data
-        if ("ep2d_neuro" in s.protocol_name) or ('iso' in s.protocol_name):
-            if ("etcalib" in s.protocol_name) or ("eyetrack" in s.protocol_name): 
+        if ("ep2d_neuro" in s.protocol_name) or ("iso" in s.protocol_name):
+            part = "mag" if "M" in s.image_type else "phase"
+            if ("etcalib" in s.protocol_name) or ("eyetrack" in s.protocol_name):
                 info[physio].append(
-                {"item": s.series_id, "recording": 'eyetracking'})
+                    {"item": s.series_id, "part": part, "recording": "eyetracking"}
+                )
             if "ret" in s.protocol_name:
                 info[physio].append(
-                {"item": s.series_id, "recording": 'retinotopy'})
-            
+                    {"item": s.series_id, "part": part, "recording": "retinotopy"}
+                )
+
         # tasks
         if ("iso" in s.protocol_name) or ("Audio" in s.protocol_name):
             part = "mag" if "M" in s.image_type else "phase"
