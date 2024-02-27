@@ -10,7 +10,7 @@ SUBJECT=bling-heudiconv-convert
 USAGE="Usage: bash run_heudiconv.sh"
 
 subjects=("COL")
-data_dir="data/dicoms"
+data_dir="data/tunnel/dicoms"
 heuristics_file="bling_heuristic.py"
 
 for subject in ${subjects[@]}
@@ -26,13 +26,43 @@ do
         heudiconv -d $data_dir/{subject}/{session}/*/* -s $subject -ss $session -c none -f convertall -o $output_dir/ --overwrite
     
     
-        # session management
-        session_id=$(( $session_id + 1 ))
-        DIR="${prepwave/exceptions/bling%/*}"
-        if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-        . "$DIR/exception.sh"
-
         # run heudiconv for coversions using the custom heuristics file
+        session_id=$(( $session_id + 1 ))
+        DIR="${BASH_SOURCE%/*}"
+        if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+        . "$DIR/incl.sh"
+        . "$DIR/main.sh"
+
+        #exceptions for COL subject
+        if [[ $subject == "COL" ]]
+        then
+            if [[ $session == "20190607LG" ]]
+            then
+                session_id=2
+            fi
+            if [[ $session == "20190709LG" ]]
+            then
+                session_id=2
+            fi
+            if [[ $session == "20210810COL" ]]
+            then
+                session_id=3
+            fi
+            if [[ $session == "20210920COL" ]]
+            then
+                session_id=4
+            fi
+            if [[ $session == "20201013COL" ]]
+            then
+                session_id=5
+            fi
+            if [[ $session == "20201017COL" ]]
+            then
+                session_id=6
+            fi
+
+        fi
+
         echo -e "\nConverting for subject" $subject "- session #"$session_id $session" using heudiconv..."
         heudiconv -d $data_dir/{subject}/$session/*/* -s $subject -ss $session_id -f $heuristics_file -o $output_dir/ -c dcm2niix -b --overwrite
         

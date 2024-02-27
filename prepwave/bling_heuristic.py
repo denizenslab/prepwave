@@ -76,7 +76,7 @@ def infotodict(seqinfo):
                 suffix = "phasediff"
             info[fmap].append({"item": s.series_id, "acq": "gre", "part": part, "suffix": suffix})
         if ("iso" in s.protocol_name) and ("se" in s.protocol_name):
-            dir = s.protocol_name[-2:]
+            dir = s.protocol_name[-2:] # AP or PA
             info[fmap_with_dir].append({"item": s.series_id, "acq": "se", "dir": dir, "suffix": "fieldmap"})
 
         # localisers
