@@ -2,11 +2,10 @@
 # ------------------------------------------------------------------
 # [Author] Anuja Negi
 #          Bash script to run heudiconv for converting dicoms to 
-#          BIDS for the bling data
+#          BIDS format using custom heuristics file
 # ------------------------------------------------------------------
 
 VERSION=0.1.0
-SUBJECT=bling-heudiconv-convert
 USAGE="Usage: bash run_heudiconv.sh"
 
 #TODO: take these as input arguments
@@ -14,9 +13,10 @@ subjects=("COL")
 data_dir="prepwave/data/dicoms"
 heuristics_file="prepwave/heuristics/heuristic_bling.py"
 exception_file="prepwave/exceptions/exception_bling.sh"
-output_dir="prepwave/data/sub-$subject/"
+output_base_dir="prepwave/data"
 
 for subject in ${subjects[@]}
+output_dir="$output_base_dir/sub-$subject/"
 do  
     
     sessions=$(find $data_dir/$subject/ -mindepth 1 -maxdepth 1 -type d | sort)
