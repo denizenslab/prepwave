@@ -4,8 +4,6 @@ bling_heuristic.py: Custom heuristic for heudiconv for the bling dataset.
 
 __author__ = "Anuja Negi"
 
-import os
-
 
 def create_key(template, outtype=("nii.gz",), annotation_classes=None):
     if template is None or not template:
