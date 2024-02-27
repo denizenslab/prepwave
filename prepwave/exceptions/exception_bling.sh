@@ -2,7 +2,7 @@
 #!/bin/bash
 # ------------------------------------------------------------------
 # [Author] Anuja Negi
-#          Bash script listing all the exception in the bling dataset
+#          Bash script listing all the exceptions for the bling dataset
 # ------------------------------------------------------------------
 
 if [[ $subject == "COL" ]]
